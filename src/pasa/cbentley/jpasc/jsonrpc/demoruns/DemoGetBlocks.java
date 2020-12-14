@@ -30,6 +30,8 @@ public class DemoGetBlocks extends DemoAbstract {
 
       requestBlockCount(mySession);
       requestBlocks(mySession, null, 409000, 409074);
+
+      requestBlocks(mySession, null, 400000, 400000);
    }
 
    private void requestBlockCount(JSONRPC2Session mySession) {
@@ -92,7 +94,13 @@ public class DemoGetBlocks extends DemoAbstract {
          System.out.println(result);
 
          JSONArray array = (JSONArray) result;
-         Object o1 = array.get(1);
+
+         if (array.isEmpty()) {
+            System.out.println("Array is empty");
+            return;
+         }
+
+         Object o1 = array.get(0);
          if (o1 instanceof JSONObject) {
             JSONObject jo = (JSONObject) o1;
             for (String key : jo.keySet()) {
@@ -100,7 +108,7 @@ public class DemoGetBlocks extends DemoAbstract {
                System.out.println(key + " -> " + object);
             }
          }
-         System.out.println(array.get(1));
+         System.out.println(array.get(0));
 
       } else {
          System.out.println(response.getError().getMessage());

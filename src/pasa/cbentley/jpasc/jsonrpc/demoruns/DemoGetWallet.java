@@ -19,34 +19,27 @@ import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DemoGetAccount extends DemoAbstract {
+public class DemoGetWallet extends DemoAbstract {
 
-   public DemoGetAccount() {
+   public DemoGetWallet() {
       super();
    }
 
    public static void main(String[] args) {
-      DemoGetAccount demo = new DemoGetAccount();
+      DemoGetWallet demo = new DemoGetWallet();
       demo.run();
    }
 
    public void run() {
       createSession();
-      requestAccount(mySession, 1);
-      requestAccount(mySession, 74751);
-      
-      requestAccount(mySession, 145090);
-      requestAccount(mySession, 145091);
+      requestKeys(mySession);
    }
 
-   private void requestAccount(JSONRPC2Session mySession, Integer account) {
-      // Construct new request
-      String method = "getaccount";
+   private void requestKeys(JSONRPC2Session mySession) {
+      String method = "getwalletcoins";
       Map<String, Object> params = new HashMap<>();
-      if (account == null) {
-         throw new IllegalArgumentException("Cannot specify both last and start/end arguments");
-      }
-      params.put("account", account);
+      params.put("start", 0);
+      params.put("max", 10);
 
       int requestID = 0;
       JSONRPC2Request request = new JSONRPC2Request(method, params, requestID);
@@ -63,25 +56,33 @@ public class DemoGetAccount extends DemoAbstract {
          // handle exception...
       }
 
-      // Print response result / error
       if (response.indicatesSuccess()) {
          Object result = response.getResult();
          System.out.println(result);
-         if (result instanceof JSONObject) {
-            JSONObject jo = (JSONObject) result;
 
-            AccountJava acc = new AccountJava(pc);
-            Object accountJson = jo.get("account");
-            acc.setAccount(((Long)accountJson).intValue());
-            acc.setEncPubkey((String)jo.get("enc_pubkey"));
+         System.out.println(result.getClass().getName());
 
-            for (String key : jo.keySet()) {
-               Object object = jo.get(key);
-               System.out.println(key + " -> " + object);
-            }
-            
-            System.out.println(acc.toString());
+         
+         
+         JSONArray array = (JSONArray) result;
+
+         if (array.isEmpty()) {
+            System.out.println("Array is empty");
+            return;
          }
+
+         for (int i = 0; i < array.size(); i++) {
+            Object o1 = array.get(i);
+            if (o1 instanceof JSONObject) {
+               JSONObject jo = (JSONObject) o1;
+               for (String key : jo.keySet()) {
+                  Object object = jo.get(key);
+                  System.out.println(key + " -> " + object);
+               }
+            }
+            System.out.println(array.get(i));
+         }
+
       } else {
          System.out.println(response.getError().getMessage());
       }
