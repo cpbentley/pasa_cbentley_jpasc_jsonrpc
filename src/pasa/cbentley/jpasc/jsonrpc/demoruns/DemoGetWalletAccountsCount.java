@@ -19,27 +19,27 @@ import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DemoGetKeys extends DemoAbstract {
+public class DemoGetWalletAccountsCount extends DemoAbstract {
 
-   public DemoGetKeys() {
+   public DemoGetWalletAccountsCount() {
       super();
    }
 
    public static void main(String[] args) {
-      DemoGetKeys demo = new DemoGetKeys();
+      DemoGetWalletAccountsCount demo = new DemoGetWalletAccountsCount();
       demo.run();
    }
 
    public void run() {
       createSession();
-      requestKeys(mySession);
+      
+      request(mySession);
    }
 
-   private void requestKeys(JSONRPC2Session mySession) {
-      String method = "getwalletpubkeys";
+   private void request(JSONRPC2Session mySession) {
+      // Construct new request
+      String method = "getwalletaccountscount";
       Map<String, Object> params = new HashMap<>();
-      params.put("start", 0);
-      params.put("max", 10);
 
       int requestID = 0;
       JSONRPC2Request request = new JSONRPC2Request(method, params, requestID);
@@ -56,29 +56,25 @@ public class DemoGetKeys extends DemoAbstract {
          // handle exception...
       }
 
+      // Print response result / error
       if (response.indicatesSuccess()) {
          Object result = response.getResult();
          System.out.println(result);
+         if (result instanceof JSONObject) {
+            JSONObject jo = (JSONObject) result;
 
-         JSONArray array = (JSONArray) result;
+            AccountJava acc = new AccountJava(pc);
+            Object accountJson = jo.get("account");
+            acc.setAccount(((Long) accountJson).intValue());
+            acc.setEncPubkey((String) jo.get("enc_pubkey"));
 
-         if (array.isEmpty()) {
-            System.out.println("Array is empty");
-            return;
-         }
-
-         for (int i = 0; i < array.size(); i++) {
-            Object o1 = array.get(i);
-            if (o1 instanceof JSONObject) {
-               JSONObject jo = (JSONObject) o1;
-               for (String key : jo.keySet()) {
-                  Object object = jo.get(key);
-                  System.out.println(key + " -> " + object);
-               }
+            for (String key : jo.keySet()) {
+               Object object = jo.get(key);
+               System.out.println(key + " -> " + object);
             }
-            System.out.println(array.get(i));
-         }
 
+            System.out.println(acc.toString());
+         }
       } else {
          System.out.println(response.getError().getMessage());
       }

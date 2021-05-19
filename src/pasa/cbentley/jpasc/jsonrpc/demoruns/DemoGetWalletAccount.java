@@ -19,27 +19,34 @@ import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DemoGetWallet extends DemoAbstract {
+public class DemoGetWalletAccount extends DemoAbstract {
 
-   public DemoGetWallet() {
+   public DemoGetWalletAccount() {
       super();
    }
 
    public static void main(String[] args) {
-      DemoGetWallet demo = new DemoGetWallet();
+      DemoGetWalletAccount demo = new DemoGetWalletAccount();
       demo.run();
    }
 
    public void run() {
       createSession();
-      requestKeys(mySession);
+      requestAccounts(mySession, "3Ghhboo16Mn1f1KtTf16yEkbbZxRKgCE1PCWvB1sBEXYusYxfEoVb6pMCyzqYoeCgKMdxhurjGVTGSZosZ6i6kbmrhNQMn9bMCXBia", null);
+      requestAccounts(mySession, null, "CA0220000BAE8D0F2A32189E1EC913E65827E7D0C826B3F8C318FB9E01DCABCAB861DCAB2000BE879FFE5036FDA17300BC58FDDAF6011A36696BF4C3CB3938C0400E6DF27B8E");
    }
 
-   private void requestKeys(JSONRPC2Session mySession) {
-      String method = "getwalletcoins";
+   private void requestAccounts(JSONRPC2Session mySession, String pkey, String encodedPkey) {
+      // Construct new request
+      String method = "getwalletaccounts";
       Map<String, Object> params = new HashMap<>();
+      if (pkey == null) {
+         throw new IllegalArgumentException("Cannot specify both last and start/end arguments");
+      }
+      params.put("b58_pubkey", pkey);
+      params.put("enc_pubkey", encodedPkey);
       params.put("start", 0);
-      params.put("max", 10);
+      //params.put("max", 10);
 
       int requestID = 0;
       JSONRPC2Request request = new JSONRPC2Request(method, params, requestID);
@@ -56,14 +63,25 @@ public class DemoGetWallet extends DemoAbstract {
          // handle exception...
       }
 
+      // Print response result / error
       if (response.indicatesSuccess()) {
          Object result = response.getResult();
          System.out.println(result);
+         if (result instanceof JSONObject) {
+            JSONObject jo = (JSONObject) result;
 
-         System.out.println(result.getClass().getName());
+            AccountJava acc = new AccountJava(pc);
+            Object accountJson = jo.get("account");
+            acc.setAccount(((Long) accountJson).intValue());
+            acc.setEncPubkey((String) jo.get("enc_pubkey"));
 
+            for (String key : jo.keySet()) {
+               Object object = jo.get(key);
+               System.out.println(key + " -> " + object);
+            }
 
-
+            System.out.println(acc.toString());
+         }
       } else {
          System.out.println(response.getError().getMessage());
       }
