@@ -12,17 +12,14 @@ import net.minidev.json.JSONObject;
 import pasa.cbentley.jpasc.jsonrpc.ctx.JPascJsonRpcCtx;
 import pasa.cbentley.jpasc.jsonrpc.mapper.MapperAccount;
 import pasa.cbentley.jpasc.jsonrpc.mapper.MapperBlock;
-import pasa.cbentley.jpasc.jsonrpc.mapper.MapperNodeStatus;
 import pasa.cbentley.jpasc.jsonrpc.mapper.MapperOperation;
 import pasa.cbentley.jpasc.jsonrpc.mapper.MapperPublicKey;
 import pasa.cbentley.jpasc.pcore.client.IPascalCoinClientReader;
+import pasa.cbentley.jpasc.pcore.rpc.exception.RPCApiException;
 import pasa.cbentley.jpasc.pcore.rpc.model.Account;
 import pasa.cbentley.jpasc.pcore.rpc.model.Block;
-import pasa.cbentley.jpasc.pcore.rpc.model.Connection;
-import pasa.cbentley.jpasc.pcore.rpc.model.DecodeOpHashResult;
 import pasa.cbentley.jpasc.pcore.rpc.model.DecryptedPayload;
 import pasa.cbentley.jpasc.pcore.rpc.model.KeyType;
-import pasa.cbentley.jpasc.pcore.rpc.model.NodeStatus;
 import pasa.cbentley.jpasc.pcore.rpc.model.Operation;
 import pasa.cbentley.jpasc.pcore.rpc.model.PublicKey;
 
@@ -58,11 +55,16 @@ public class JPascJsonRPCEngineReader extends JPascJsonRPCEngineAbstract impleme
          params.put("start", start);
       if (max != null)
          params.put("max", max);
-
-      JSONArray array = (JSONArray) super.launchRequest("getwalletaccounts", params);
-      MapperAccount map = jjc.getMappers().getMapperAccount();
-      List<Account> list = map.getList(array);
-      return list;
+      try {
+         JSONArray array = (JSONArray) super.launchRequest("getwalletaccounts", params);
+         MapperAccount map = jjc.getMappers().getMapperAccount();
+         List<Account> list = map.getList(array);
+         return list;
+      } catch (RPCApiException e) {
+         //#debug
+         e.printStackTrace();
+         return getEmptyListAccount();
+      }
    }
 
    public Integer getWalletAccountsCount(String encPubKey, String b58PubKey) {
@@ -107,10 +109,10 @@ public class JPascJsonRPCEngineReader extends JPascJsonRPCEngineAbstract impleme
          params.put("b58_pubkey", b58PubKey);
 
       Object obj = super.launchRequest("getwalletcoins", params);
-      if(obj instanceof Double) {
-         return (Double)obj;
-      } else if(obj instanceof Long)  {
-         Long l = (Long)obj;
+      if (obj instanceof Double) {
+         return (Double) obj;
+      } else if (obj instanceof Long) {
+         Long l = (Long) obj;
          return l.doubleValue();
       } else {
          throw new IllegalArgumentException();
@@ -234,7 +236,7 @@ public class JPascJsonRPCEngineReader extends JPascJsonRPCEngineAbstract impleme
       Map<String, Object> params = new HashMap<>();
       params.put("start", start);
       params.put("max", max);
-      
+
       JSONArray array = (JSONArray) super.launchRequest("getpendings", params);
       MapperOperation mapper = getMapperOperation();
       List<Operation> list = mapper.getList(array);
@@ -257,8 +259,6 @@ public class JPascJsonRPCEngineReader extends JPascJsonRPCEngineAbstract impleme
       Operation b = mapper.getT(obj);
       return b;
    }
-
-
 
    public Operation findNOperation(Integer account, Integer nOperation) {
       Map<String, Object> params = new HashMap<>();
@@ -308,10 +308,20 @@ public class JPascJsonRPCEngineReader extends JPascJsonRPCEngineAbstract impleme
       if (max != null)
          params.put("max", max);
 
-      JSONArray array = (JSONArray) super.launchRequest("findaccounts", params);
-      MapperAccount map = jjc.getMappers().getMapperAccount();
-      List<Account> list = map.getList(array);
-      return list;
+      try {
+         JSONArray array = (JSONArray) super.launchRequest("findaccounts", params);
+         MapperAccount map = jjc.getMappers().getMapperAccount();
+         List<Account> list = map.getList(array);
+         return list;
+      } catch (RPCApiException e) {
+         //#debug
+         e.printStackTrace();
+         return getEmptyListAccount();
+      }
+   }
+
+   private List<Account> getEmptyListAccount() {
+      return new ArrayList<Account>(0);
    }
 
    /**
@@ -344,13 +354,19 @@ public class JPascJsonRPCEngineReader extends JPascJsonRPCEngineAbstract impleme
          params.put("start", start);
       if (max != null)
          params.put("max", max);
+      try {
+         JSONArray array = (JSONArray) super.launchRequest("findaccounts", params);
+         MapperAccount map = jjc.getMappers().getMapperAccount();
+         List<Account> list = map.getList(array);
+         return list;
 
-      JSONArray array = (JSONArray) super.launchRequest("findaccounts", params);
-      MapperAccount map = jjc.getMappers().getMapperAccount();
-      List<Account> list = map.getList(array);
-      return list;
+      } catch (RPCApiException e) {
+         //#debug
+         e.printStackTrace();
+         return getEmptyListAccount();
+      }
    }
-   
+
    public List<Account> findAccounts(String name, Boolean exact, Integer type, Boolean listed, Double minBalance, Double maxBalance, Integer start, Integer max) {
       Map<String, Object> params = new HashMap<>();
       if (name != null && !"".equals(name))
@@ -369,13 +385,17 @@ public class JPascJsonRPCEngineReader extends JPascJsonRPCEngineAbstract impleme
          params.put("start", start);
       if (max != null)
          params.put("max", max);
-
-      JSONArray array = (JSONArray) super.launchRequest("findaccounts", params);
-      MapperAccount map = jjc.getMappers().getMapperAccount();
-      List<Account> list = map.getList(array);
-      return list;
+      try {
+         JSONArray array = (JSONArray) super.launchRequest("findaccounts", params);
+         MapperAccount map = jjc.getMappers().getMapperAccount();
+         List<Account> list = map.getList(array);
+         return list;
+      } catch (RPCApiException e) {
+         //#debug
+         e.printStackTrace();
+         return getEmptyListAccount();
+      }
    }
-
 
    public String encodePubKey(KeyType ecNid, String x, String y) {
       if (ecNid == null || x == null || y == null)

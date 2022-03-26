@@ -57,7 +57,7 @@ public class DemoFindAccountsNamesPasc extends DemoAbstract {
       
       int requestID = 0;
       JSONRPC2Request request = new JSONRPC2Request(method, params, requestID);
-      sendRequest(request);
+      sendRequestArray(request);
    }
 
 }

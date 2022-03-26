@@ -69,6 +69,13 @@ public abstract class JPascJsonRPCEngineAbstract extends ObjectJascJsonRpc {
       return launchRequest(method, null);
    }
 
+   /**
+    * 
+    * @param method
+    * @param params
+    * @return
+    * @throws RPCApiException
+    */
    protected Object launchRequest(String method, Map<String, Object> params) {
       Long requestID = jjc.getNextRequestID();
       JSONRPC2Request request = new JSONRPC2Request(method, params, requestID);

@@ -20,43 +20,31 @@ import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DemoFindAccountsNamesBentleyEndsWith extends DemoAbstract {
+public class DemoGetPendingCount extends DemoAbstract {
 
-   public DemoFindAccountsNamesBentleyEndsWith() {
+   public DemoGetPendingCount() {
       super();
    }
 
    public static void main(String[] args) {
-      DemoFindAccountsNamesBentleyEndsWith demo = new DemoFindAccountsNamesBentleyEndsWith();
+      DemoGetPendingCount demo = new DemoGetPendingCount();
       demo.run();
    }
 
    public void run() {
       createSession();
       
-      System.out.println("--------ENDSWITH---------");
-      //requestKeys(mySession, "bentley", ITechPascRPC.NAMESEARCHTYPE_ENDS_WITH);
-      System.out.println("-----------------");
-      
-      System.out.println("--------ENDSWITH---------");
-      requestKeys(mySession, "te", ITechPascRPC.NAMESEARCHTYPE_ENDS_WITH);
-      System.out.println("-----------------");
+      System.out.println("--------getpendingscount---------");
+      request(mySession);
       
    }
 
-   private void requestKeys(JSONRPC2Session mySession, String name, String namesearchtype) {
-      String method = "findaccounts";
+   private void request(JSONRPC2Session mySession) {
+      String method = "getpendingscount";
       Map<String, Object> params = new HashMap<>();
-      params.put("start", 0);
-      params.put("max", 10);
-      if (name != null && !"".equals(name))
-         params.put("name", name);
-      if (namesearchtype != null)
-         params.put("namesearchtype", namesearchtype);
-      
       int requestID = 0;
       JSONRPC2Request request = new JSONRPC2Request(method, params, requestID);
-      sendRequestArray(request);
+      sendRequestObj(request);
    }
 
 }
