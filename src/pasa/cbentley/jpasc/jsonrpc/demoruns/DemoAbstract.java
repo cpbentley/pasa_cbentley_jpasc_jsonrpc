@@ -19,9 +19,9 @@ public abstract class DemoAbstract {
 
    protected final JPascJsonRpcCtx jjc;
 
-   protected final PCoreCtx        pc;
-
    protected JSONRPC2Session       mySession;
+
+   protected final PCoreCtx        pc;
 
    public DemoAbstract() {
       UCtx uc = new UCtx();
@@ -49,9 +49,9 @@ public abstract class DemoAbstract {
       // Create new JSON-RPC 2.0 client session
       mySession = new JSONRPC2Session(serverURL);
    }
-   
-   protected void sendRequest(JSONRPC2Request request) {
-   // Send request
+
+   protected void sendRequestArray(JSONRPC2Request request) {
+      // Send request
       JSONRPC2Response response = null;
 
       try {
@@ -73,7 +73,7 @@ public abstract class DemoAbstract {
             System.out.println("Array is empty");
             return;
          } else {
-            System.out.println("Array found of size "+ array.size());
+            System.out.println("Array found of size " + array.size());
          }
 
          for (int i = 0; i < array.size(); i++) {
@@ -88,6 +88,27 @@ public abstract class DemoAbstract {
             System.out.println(array.get(i));
          }
 
+      } else {
+         System.out.println(response.getError().getMessage());
+      }
+   }
+
+   protected void sendRequestObj(JSONRPC2Request request) {
+      // Send request
+      JSONRPC2Response response = null;
+
+      try {
+         response = mySession.send(request);
+
+      } catch (JSONRPC2SessionException e) {
+
+         System.err.println(e.getMessage());
+         // handle exception...
+      }
+
+      // Print response result / error
+      if (response.indicatesSuccess()) {
+         System.out.println(response.getResult());
       } else {
          System.out.println(response.getError().getMessage());
       }
