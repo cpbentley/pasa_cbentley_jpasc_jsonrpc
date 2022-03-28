@@ -41,7 +41,9 @@ public abstract class RunEngineAbstract implements IStringable {
 
    public void run() {
       JPascJsonRPCClientFactory factory = new JPascJsonRPCClientFactory(jjc);
+      pc.setPascalCoinClientFactory(factory);
       client = factory.createClient(pc, ip, port);
+      pc.setPascalCoinClient(client);
       run(client);
    }
 

@@ -18,7 +18,7 @@ public class RunEngineGetAccount extends RunEngineAbstract {
       Account bc = client.getAccount(145090);
 
       //#debug
-      toDLog().pAlways("Account=" + bc, bc, RunEngineGetAccount.class, "run", LVL_05_FINE, false);
+      toDLog().pAlways("Account=", bc, RunEngineGetAccount.class, "run", LVL_05_FINE, false);
    }
 
 }
