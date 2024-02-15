@@ -1,5 +1,7 @@
 package pasa.cbentley.jpasc.jsonrpc.engine;
 
+import java.math.BigDecimal;
+
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -72,6 +74,11 @@ public class JSONObjectGetter {
       if (o instanceof Double) {
          return (Double) o;
       }
-      throw new IllegalArgumentException(o.toString() + " is not Double");
+      if(o instanceof java.math.BigDecimal) {
+         BigDecimal bd = (BigDecimal)o;
+         return new Double(bd.doubleValue());
+      }
+
+      throw new IllegalArgumentException(o.toString() + " is not Double but is " + o.getClass().getName());
    }
 }
