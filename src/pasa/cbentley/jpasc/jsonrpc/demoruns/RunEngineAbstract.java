@@ -77,7 +77,7 @@ public abstract class RunEngineAbstract implements IStringable {
    }
 
    public UCtx toStringGetUCtx() {
-      return jjc.getUCtx();
+      return jjc.getUC();
    }
 
    //#enddebug

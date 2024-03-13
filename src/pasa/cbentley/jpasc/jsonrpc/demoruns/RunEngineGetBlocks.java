@@ -22,7 +22,7 @@ public class RunEngineGetBlocks extends RunEngineAbstract {
 
       
       //#debug
-      toDLog().pAlways("getBlocks 400000 400001", new StringableList(pc.getUCtx(),bc), RunEngineGetBlocks.class, "run", LVL_05_FINE, false);
+      toDLog().pAlways("getBlocks 400000 400001", new StringableList(pc.getUC(),bc), RunEngineGetBlocks.class, "run", LVL_05_FINE, false);
    }
 
 

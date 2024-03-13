@@ -45,7 +45,7 @@ public class ObjectJascJsonRpc implements IStringable {
    }
 
    public UCtx toStringGetUCtx() {
-      return jjc.getUCtx();
+      return jjc.getUC();
    }
 
    //#enddebug

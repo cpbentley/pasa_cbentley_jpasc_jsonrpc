@@ -16,7 +16,7 @@ public class JPascJsonRpcCtx extends ACtx {
    protected final PCoreCtx pc;
 
    public JPascJsonRpcCtx(PCoreCtx pc) {
-      super(pc.getUCtx());
+      super(pc.getUC());
       this.pc = pc;
 
       mappers = new Mappers(this);
